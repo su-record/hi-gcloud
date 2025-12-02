@@ -11,7 +11,7 @@ import { formatError } from '../utils/format.js';
 
 export const gcpSetupDefinition = {
   name: 'gcp_setup',
-  description: '설정|초기화|프로필|setup|init|configure|GCP 사용|비활성화 - GCP 프로젝트 설정을 관리합니다 (.hi-gcloud.json)',
+  description: '설정|초기화|프로필|setup|init|configure|GCP 사용|비활성화 - GCP 프로젝트 설정을 관리합니다 (.hi-gcloud.json). [중요] 세션 시작 시 가장 먼저 이 도구로 GCP 설정 상태를 확인하세요 (action: "status").',
   annotations: {
     title: 'GCP 설정 관리',
     readOnlyHint: false,

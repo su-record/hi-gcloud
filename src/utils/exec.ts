@@ -84,8 +84,29 @@ function parseGcloudError(errorMessage: string): GcloudError {
  */
 export async function checkGcloudAuth(): Promise<{ authenticated: boolean; project?: string; account?: string; error?: GcloudError }> {
   try {
-    // Check if gcloud is installed
-    await execAsync('gcloud --version', { timeout: 5000 });
+    // Check if gcloud is installed - try common paths if not in PATH
+    const gcloudPaths = [
+      'gcloud',
+      '/usr/local/bin/gcloud',
+      '/opt/homebrew/bin/gcloud',
+      `${process.env.HOME}/google-cloud-sdk/bin/gcloud`,
+      '/usr/bin/gcloud',
+    ];
+
+    let gcloudFound = false;
+    for (const gcloudPath of gcloudPaths) {
+      try {
+        await execAsync(`${gcloudPath} --version`, { timeout: 5000 });
+        gcloudFound = true;
+        break;
+      } catch {
+        continue;
+      }
+    }
+
+    if (!gcloudFound) {
+      throw new Error('gcloud not found');
+    }
   } catch {
     return {
       authenticated: false,
