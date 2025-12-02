@@ -1,16 +1,15 @@
 {
-  "name": "@polin-go/hi-gcloud",
+  "name": "@su-record/hi-gcloud",
   "version": "0.1.0",
   "description": "MCP server for GCP operations - Query logs, check Cloud Run status, and debug deployments with gcloud CLI",
   "displayName": "Hi-GCloud",
-  "icon": "https://raw.githubusercontent.com/polin-go/hi-gcloud/main/icon.png",
-  "homepage": "https://github.com/polin-go/hi-gcloud",
+  "homepage": "https://github.com/su-record/hi-gcloud",
   "repository": {
     "type": "git",
-    "url": "https://github.com/polin-go/hi-gcloud.git"
+    "url": "https://github.com/su-record/hi-gcloud.git"
   },
   "bugs": {
-    "url": "https://github.com/polin-go/hi-gcloud/issues"
+    "url": "https://github.com/su-record/hi-gcloud/issues"
   },
   "main": "dist/index.js",
   "module": "./src/index.ts",
@@ -41,7 +40,7 @@
     "claude",
     "anthropic"
   ],
-  "author": "Polin-Go",
+  "author": "Su",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"

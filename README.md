@@ -1,6 +1,6 @@
 # Hi-GCloud
 
-[![npm version](https://badge.fury.io/js/@polin-go%2Fhi-gcloud.svg)](https://www.npmjs.com/package/@polin-go/hi-gcloud)
+[![npm version](https://badge.fury.io/js/@su-record%2Fhi-gcloud.svg)](https://www.npmjs.com/package/@su-record/hi-gcloud)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io)
 
@@ -30,7 +30,7 @@ MCP server for GCP operations - Query logs, check Cloud Run status, and debug de
 ## Installation
 
 ```bash
-npm install -g @polin-go/hi-gcloud
+npm install -g @su-record/hi-gcloud
 ```
 
 ### Claude Desktop Configuration
@@ -42,7 +42,7 @@ npm install -g @polin-go/hi-gcloud
   "mcpServers": {
     "hi-gcloud": {
       "command": "npx",
-      "args": ["-y", "@polin-go/hi-gcloud"]
+      "args": ["-y", "@su-record/hi-gcloud"]
     }
   }
 }
@@ -286,7 +286,7 @@ User: "배포가 실패했어"
     },
     "hi-gcloud": {
       "command": "npx",
-      "args": ["-y", "@polin-go/hi-gcloud"]
+      "args": ["-y", "@su-record/hi-gcloud"]
     }
   }
 }
