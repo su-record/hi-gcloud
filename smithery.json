@@ -1,0 +1,19 @@
+{
+  "name": "@su-record/hi-gcloud",
+  "description": "GCP 운영 도구 - 로그 조회, Cloud Run 배포 디버깅, 비용 모니터링을 CLI에서 바로",
+  "version": "0.1.0",
+  "author": "Su",
+  "license": "MIT",
+  "categories": [
+    "development", "devops", "cloud", "gcp", "debugging", "logging"
+  ],
+  "homepage": "https://github.com/su-record/hi-gcloud",
+  "repository": "https://github.com/su-record/hi-gcloud",
+  "readme": "https://github.com/su-record/hi-gcloud/blob/main/README.md",
+  "icon": "☁️",
+  "capabilities": {
+    "tools": true,
+    "resources": false,
+    "prompts": false
+  }
+}
