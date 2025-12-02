@@ -1,0 +1,54 @@
+{
+  "name": "@polin-go/hi-gcloud",
+  "version": "0.1.0",
+  "description": "MCP server for GCP operations - Query logs, check Cloud Run status, and debug deployments with gcloud CLI",
+  "displayName": "Hi-GCloud",
+  "icon": "https://raw.githubusercontent.com/polin-go/hi-gcloud/main/icon.png",
+  "homepage": "https://github.com/polin-go/hi-gcloud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/polin-go/hi-gcloud.git"
+  },
+  "bugs": {
+    "url": "https://github.com/polin-go/hi-gcloud/issues"
+  },
+  "main": "dist/index.js",
+  "module": "./src/index.ts",
+  "type": "module",
+  "bin": {
+    "hi-gcloud": "dist/index.js"
+  },
+  "scripts": {
+    "dev": "npm run build && node dist/index.js",
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "gcp",
+    "google-cloud",
+    "gcloud",
+    "cloud-logging",
+    "cloud-run",
+    "cloud-sql",
+    "cloud-storage",
+    "devops",
+    "debugging",
+    "logs",
+    "claude",
+    "anthropic"
+  ],
+  "author": "Polin-Go",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.4",
+    "vitest": "^4.0.9"
+  }
+}
