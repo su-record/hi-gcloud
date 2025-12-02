@@ -4,6 +4,13 @@ import { formatSqlResult, formatError } from '../utils/format.js';
 export const gcpSqlQueryDefinition = {
   name: 'gcp_sql_query',
   description: 'Cloud SQL 쿼리|DB 조회|sql query - Cloud SQL에서 읽기 전용 쿼리를 실행합니다',
+  annotations: {
+    title: 'Cloud SQL 쿼리 실행',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

@@ -12,6 +12,13 @@ import { formatError } from '../utils/format.js';
 export const gcpSetupDefinition = {
   name: 'gcp_setup',
   description: '설정|초기화|프로필|setup|init|configure|GCP 사용|비활성화 - GCP 프로젝트 설정을 관리합니다 (.hi-gcloud.json)',
+  annotations: {
+    title: 'GCP 설정 관리',
+    readOnlyHint: false,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: false,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

@@ -4,6 +4,13 @@ import { formatError } from '../utils/format.js';
 export const gcpAuthStatusDefinition = {
   name: 'gcp_auth_status',
   description: '인증 상태|로그인 확인|계정 정보|auth status|whoami - GCP 인증 상태와 계정 정보를 확인합니다',
+  annotations: {
+    title: 'GCP 인증 상태 확인',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

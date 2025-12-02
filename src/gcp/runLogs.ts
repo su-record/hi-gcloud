@@ -4,6 +4,13 @@ import { formatLogEntries, formatError, createErrorReport, createDetailedErrorRe
 export const gcpRunLogsDefinition = {
   name: 'gcp_run_logs',
   description: 'Cloud Run 로그|배포 로그|서비스 로그|run logs - Cloud Run 서비스 로그를 조회합니다',
+  annotations: {
+    title: 'Cloud Run 로그 조회',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

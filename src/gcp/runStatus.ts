@@ -4,6 +4,13 @@ import { formatRunStatus, formatError } from '../utils/format.js';
 export const gcpRunStatusDefinition = {
   name: 'gcp_run_status',
   description: 'Cloud Run 상태|서비스 상태|배포 상태|run status - Cloud Run 서비스 상태를 조회합니다',
+  annotations: {
+    title: 'Cloud Run 상태 조회',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

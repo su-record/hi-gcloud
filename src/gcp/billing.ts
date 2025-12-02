@@ -4,6 +4,13 @@ import { formatError, getHiAiIntegrationHint } from '../utils/format.js';
 export const gcpBillingInfoDefinition = {
   name: 'gcp_billing_info',
   description: '과금 정보|비용 확인|요금|billing|cost|얼마 나왔어 - GCP 프로젝트 결제 정보와 비용을 조회합니다',
+  annotations: {
+    title: 'GCP 결제 정보 조회',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

@@ -4,6 +4,13 @@ import { formatError } from '../utils/format.js';
 export const gcpSecretListDefinition = {
   name: 'gcp_secret_list',
   description: '시크릿 목록|비밀 관리|secret manager|secrets - Secret Manager 시크릿을 조회합니다',
+  annotations: {
+    title: 'Secret Manager 조회',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

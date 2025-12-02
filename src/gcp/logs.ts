@@ -4,6 +4,13 @@ import { formatLogEntries, formatError, createErrorReport, createDetailedErrorRe
 export const gcpLogsReadDefinition = {
   name: 'gcp_logs_read',
   description: '로그 조회|에러 확인|Cloud Logging|gcp logs|에러 로그 - GCP Cloud Logging에서 로그를 조회합니다',
+  annotations: {
+    title: 'GCP 로그 조회',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

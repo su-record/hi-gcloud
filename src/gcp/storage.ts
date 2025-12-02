@@ -4,6 +4,13 @@ import { formatStorageList, formatError, formatFileSize } from '../utils/format.
 export const gcpStorageListDefinition = {
   name: 'gcp_storage_list',
   description: 'GCS 목록|버킷 목록|스토리지|storage list - Cloud Storage 버킷/객체 목록을 조회합니다',
+  annotations: {
+    title: 'Cloud Storage 목록 조회',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {

@@ -13,7 +13,24 @@
   "icon": "https://raw.githubusercontent.com/su-record/hi-gcloud/main/icon.svg",
   "capabilities": {
     "tools": true,
-    "resources": false,
-    "prompts": false
+    "resources": true,
+    "prompts": true
+  },
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "projectId": {
+        "type": "string",
+        "title": "GCP Project ID",
+        "description": "GCP 프로젝트 ID (선택사항, 미설정시 gcloud 기본값 사용)"
+      },
+      "region": {
+        "type": "string",
+        "title": "Default Region",
+        "description": "기본 리전",
+        "default": "asia-northeast3"
+      }
+    },
+    "required": []
   }
 }

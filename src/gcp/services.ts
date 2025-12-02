@@ -4,6 +4,13 @@ import { formatError } from '../utils/format.js';
 export const gcpServicesListDefinition = {
   name: 'gcp_services_list',
   description: 'API 목록|활성화된 서비스|enabled APIs|services - 프로젝트에서 활성화된 API 서비스 목록을 조회합니다',
+  annotations: {
+    title: 'GCP API 서비스 목록',
+    readOnlyHint: true,
+    destructiveHint: false,
+    idempotentHint: true,
+    openWorldHint: true,
+  },
   inputSchema: {
     type: 'object' as const,
     properties: {
