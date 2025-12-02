@@ -1,0 +1,96 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- GCP-style gradient background -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4285F4;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#34A853;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FBBC04;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Cloud gradient -->
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f1f3f4;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Terminal gradient -->
+    <linearGradient id="terminal" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2d3436;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e272e;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Soft shadow -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+
+  <!-- Decorative circles -->
+  <g opacity="0.15">
+    <circle cx="80" cy="100" r="35" fill="white"/>
+    <circle cx="440" cy="90" r="25" fill="white"/>
+    <circle cx="70" cy="420" r="30" fill="white"/>
+    <circle cx="450" cy="400" r="40" fill="white"/>
+  </g>
+
+  <!-- Cloud shape -->
+  <g transform="translate(256, 180)" filter="url(#shadow)">
+    <ellipse cx="0" cy="0" rx="120" ry="70" fill="url(#cloud)"/>
+    <ellipse cx="-80" cy="20" rx="60" ry="50" fill="url(#cloud)"/>
+    <ellipse cx="80" cy="15" rx="55" ry="45" fill="url(#cloud)"/>
+    <ellipse cx="-40" cy="-30" rx="50" ry="40" fill="url(#cloud)"/>
+    <ellipse cx="40" cy="-25" rx="45" ry="35" fill="url(#cloud)"/>
+  </g>
+
+  <!-- Terminal window -->
+  <g transform="translate(256, 340)" filter="url(#shadow)">
+    <!-- Terminal body -->
+    <rect x="-100" y="-50" width="200" height="130" rx="12" fill="url(#terminal)"/>
+
+    <!-- Terminal header bar -->
+    <rect x="-100" y="-50" width="200" height="25" rx="12" fill="#3d3d3d"/>
+    <rect x="-100" y="-35" width="200" height="10" fill="#3d3d3d"/>
+
+    <!-- Traffic lights -->
+    <circle cx="-80" cy="-38" r="6" fill="#EA4335"/>
+    <circle cx="-60" cy="-38" r="6" fill="#FBBC04"/>
+    <circle cx="-40" cy="-38" r="6" fill="#34A853"/>
+
+    <!-- Terminal prompt -->
+    <text x="-85" y="0" font-family="'Monaco', 'Menlo', monospace" font-size="18" fill="#34A853">$</text>
+    <text x="-70" y="0" font-family="'Monaco', 'Menlo', monospace" font-size="18" fill="#ffffff">gcloud</text>
+
+    <!-- Command text -->
+    <text x="-85" y="30" font-family="'Monaco', 'Menlo', monospace" font-size="14" fill="#4285F4">logs read</text>
+
+    <!-- Cursor blink -->
+    <rect x="-85" y="45" width="8" height="15" fill="#34A853" opacity="0.8"/>
+  </g>
+
+  <!-- "Hi" text on cloud -->
+  <g transform="translate(256, 160)">
+    <text x="0" y="0" font-family="'Arial Rounded MT Bold', 'Helvetica', sans-serif" font-size="55" font-weight="700"
+          fill="#4285F4" text-anchor="middle">Hi</text>
+    <text x="0" y="45" font-family="'Arial Rounded MT Bold', 'Helvetica', sans-serif" font-size="40" font-weight="700"
+          fill="#34A853" text-anchor="middle">GCloud</text>
+  </g>
+
+  <!-- GCP-style hexagon decoration -->
+  <g transform="translate(420, 180)" opacity="0.9">
+    <polygon points="0,-20 17,-10 17,10 0,20 -17,10 -17,-10" fill="#EA4335"/>
+  </g>
+  <g transform="translate(90, 200)" opacity="0.9">
+    <polygon points="0,-15 13,-7 13,7 0,15 -13,7 -13,-7" fill="#FBBC04"/>
+  </g>
+
+  <!-- Sparkles -->
+  <g fill="#ffffff" opacity="0.6">
+    <circle cx="150" cy="120" r="4"/>
+    <circle cx="370" cy="140" r="5"/>
+    <circle cx="120" cy="350" r="3"/>
+    <circle cx="400" cy="320" r="4"/>
+  </g>
+</svg>

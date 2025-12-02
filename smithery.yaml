@@ -20,6 +20,7 @@ env:
 homepage: "https://github.com/su-record/hi-gcloud"
 repository: "https://github.com/su-record/hi-gcloud"
 readme: "https://github.com/su-record/hi-gcloud/main/README.md"
+icon: "https://raw.githubusercontent.com/su-record/hi-gcloud/main/icon.svg"
 capabilities:
   tools: true
   resources: false
