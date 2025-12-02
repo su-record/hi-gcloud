@@ -108,6 +108,13 @@ function createServer() {
         prompts: {},
         resources: {},
       },
+      instructions: `[중요] 세션 시작 시 가장 먼저 gcp_setup 도구를 호출하여 GCP 프로젝트 설정 상태를 확인하세요.
+
+예: gcp_setup(action: "status")
+
+설정이 없으면 사용자에게 GCP 사용 여부를 물어보고:
+- GCP 사용 시: gcp_setup(action: "create")
+- GCP 미사용 시: gcp_setup(action: "disable")`,
     }
   );
 
