@@ -50,14 +50,16 @@ npm install -g @su-record/hi-gcloud
 
 ## First-Time Setup
 
-처음 GCP 도구를 사용하면 설정을 묻습니다:
+**세션이 시작되면 자동으로 GCP 사용 여부를 물어봅니다:**
 
 ```
-📋 이 프로젝트에서 GCP를 사용하시나요?
-
-1️⃣  예 → gcp_setup(action: "create")
-2️⃣  아니오 → gcp_setup(action: "disable")
+이 프로젝트에서 GCP를 사용하시나요?
+- 예 → GCP 설정 생성
+- 아니오 → GCP 기능 비활성화 (도구가 숨겨집니다)
 ```
+
+> 💡 **빠른 온보딩**: 도구 호출 없이 바로 질문하므로 응답이 빠릅니다.
+> GCP를 사용하지 않는 프로젝트에서는 "아니오"를 선택하면 모든 GCP 도구가 비활성화됩니다.
 
 ### GCP 사용 프로젝트
 
@@ -91,8 +93,8 @@ gcp_setup(action: "disable")
 }
 ```
 
-> 💡 **도구 숨김**: `enabled: false`로 설정하면 hi-gcloud의 모든 도구가 LLM에게 보이지 않습니다.
-> GCP를 사용하지 않는 프로젝트에서 불필요한 도구 노출을 방지합니다.
+> 💡 **도구 비활성화**: `enabled: false`로 설정하면 hi-gcloud의 모든 도구가 LLM에게 보이지 않습니다.
+> GCP를 사용하지 않는 프로젝트에서 불필요한 도구 호출을 완전히 방지합니다.
 
 ### GCP 재연결
 

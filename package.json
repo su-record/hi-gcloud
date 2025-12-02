@@ -1,6 +1,6 @@
 {
   "name": "@su-record/hi-gcloud",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for GCP operations - Query logs, check Cloud Run status, and debug deployments with gcloud CLI",
   "displayName": "Hi-GCloud",
   "homepage": "https://github.com/su-record/hi-gcloud",
