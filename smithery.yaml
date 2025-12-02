@@ -1,0 +1,38 @@
+name: "@su-record/hi-gcloud"
+description: "GCP 운영 도구 - 로그 조회, Cloud Run 배포 디버깅, 비용 모니터링을 CLI에서 바로"
+version: "0.1.0"
+author: "Su"
+license: "MIT"
+categories:
+  - development
+  - devops
+  - cloud
+  - gcp
+  - debugging
+  - logging
+runtime: "typescript"
+main: "src/index.ts"
+build:
+  script: "npm run build"
+  output: "dist/index.js"
+env:
+  NODE_ENV: "production"
+homepage: "https://github.com/su-record/hi-gcloud"
+repository: "https://github.com/su-record/hi-gcloud"
+readme: "https://github.com/su-record/hi-gcloud/main/README.md"
+capabilities:
+  tools: true
+  resources: false
+  prompts: false
+config:
+  requires_api_key: false
+  schema:
+    type: "object"
+    properties:
+      projectId:
+        type: "string"
+        description: "GCP Project ID (optional, uses gcloud default if not set)"
+      region:
+        type: "string"
+        description: "Default GCP region"
+        default: "asia-northeast3"
