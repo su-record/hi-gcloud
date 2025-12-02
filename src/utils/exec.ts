@@ -1,6 +1,5 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { readConfig } from './config.js';
 
 const execAsync = promisify(exec);
 
@@ -174,7 +173,7 @@ export async function checkGcloudAuth(): Promise<{ authenticated: boolean; proje
 }
 
 /**
- * Get current project ID (priority: parameter > .hi-gcloud.json > gcloud config)
+ * Get current project ID (priority: parameter > gcloud config)
  */
 export async function getProjectId(providedProjectId?: string): Promise<string> {
   // 1. Parameter takes highest priority
@@ -182,13 +181,7 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
     return providedProjectId;
   }
 
-  // 2. Check .hi-gcloud.json
-  const configResult = readConfig();
-  if (configResult.exists && configResult.config?.project_id) {
-    return configResult.config.project_id;
-  }
-
-  // 3. Fall back to gcloud config
+  // 2. Fall back to gcloud config
   const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
 
   try {
@@ -199,7 +192,7 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
       throw {
         type: 'NO_PROJECT',
         message: '프로젝트가 설정되지 않았습니다.',
-        suggestion: '.hi-gcloud.json을 생성하거나 gcp_setup 도구를 사용해주세요.',
+        suggestion: '`gcloud config set project PROJECT_ID` 명령어를 실행해주세요.',
       } as GcloudError;
     }
 
@@ -213,7 +206,7 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
 }
 
 /**
- * Get region (priority: parameter > .hi-gcloud.json > gcloud config)
+ * Get region (priority: parameter > gcloud config)
  */
 export async function getRegion(providedRegion?: string): Promise<string | undefined> {
   // 1. Parameter takes highest priority
@@ -221,13 +214,7 @@ export async function getRegion(providedRegion?: string): Promise<string | undef
     return providedRegion;
   }
 
-  // 2. Check .hi-gcloud.json
-  const configResult = readConfig();
-  if (configResult.exists && configResult.config?.region) {
-    return configResult.config.region;
-  }
-
-  // 3. Fall back to gcloud config
+  // 2. Fall back to gcloud config
   const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
 
   try {

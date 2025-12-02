@@ -16,7 +16,6 @@ MCP server for GCP operations - Query logs, check Cloud Run status, and debug de
 - **Auth Status** - 인증 상태 확인
 - **API Services** - 활성화된 서비스 목록
 - **Billing** - 과금 정보 조회
-- **프로젝트별 설정** - `.hi-gcloud.json`으로 프로젝트별 GCP 설정
 
 ## Prerequisites
 
@@ -48,91 +47,7 @@ npm install -g @su-record/hi-gcloud
 }
 ```
 
-## First-Time Setup
-
-**세션이 시작되면 자동으로 GCP 사용 여부를 물어봅니다:**
-
-```
-이 프로젝트에서 GCP를 사용하시나요?
-- 예 → GCP 설정 생성
-- 아니오 → GCP 기능 비활성화 (도구가 숨겨집니다)
-```
-
-> 💡 **빠른 온보딩**: 도구 호출 없이 바로 질문하므로 응답이 빠릅니다.
-> GCP를 사용하지 않는 프로젝트에서는 "아니오"를 선택하면 모든 GCP 도구가 비활성화됩니다.
-
-### GCP 사용 프로젝트
-
-```bash
-# 현재 gcloud 설정으로 자동 생성
-gcp_setup(action: "create")
-
-# 또는 직접 지정
-gcp_setup(action: "create", project_id: "my-project-id")
-```
-
-생성되는 `.hi-gcloud.json`:
-```json
-{
-  "enabled": true,
-  "project_id": "my-project-id",
-  "region": "asia-northeast3"
-}
-```
-
-### GCP 미사용 프로젝트
-
-```bash
-gcp_setup(action: "disable")
-```
-
-생성되는 `.hi-gcloud.json`:
-```json
-{
-  "enabled": false
-}
-```
-
-> 💡 **도구 비활성화**: `enabled: false`로 설정하면 hi-gcloud의 모든 도구가 LLM에게 보이지 않습니다.
-> GCP를 사용하지 않는 프로젝트에서 불필요한 도구 호출을 완전히 방지합니다.
-
-### GCP 재연결
-
-비활성화된 프로젝트에서 다시 GCP를 사용하려면:
-
-```bash
-gcp_setup(action: "enable")
-
-# 또는 프로젝트 ID 직접 지정
-gcp_setup(action: "enable", project_id: "my-new-project")
-```
-
-### 수동 설정
-
-프로젝트 루트에 직접 `.hi-gcloud.json` 파일을 만들 수도 있습니다:
-
-```json
-{
-  "enabled": true,
-  "project_id": "your-project-id",
-  "region": "asia-northeast3",
-  "account": "your@email.com"
-}
-```
-
-> ⚠️ `.gitignore`에 `.hi-gcloud.json` 추가를 권장합니다.
-
-## Tools (10 tools)
-
-### gcp_setup
-GCP 프로젝트 설정 관리
-
-```
-"GCP 설정 상태 확인" → action: "status"
-"GCP 활성화" → action: "create" 또는 "enable"
-"GCP 비활성화" → action: "disable"
-"설정 업데이트" → action: "update"
-```
+## Tools (9 tools)
 
 ### gcp_logs_read
 Cloud Logging에서 로그 조회
@@ -298,8 +213,7 @@ User: "배포가 실패했어"
 
 설정 우선순위:
 1. 도구 파라미터로 직접 지정 (예: `project_id: "my-project"`)
-2. `.hi-gcloud.json` 파일
-3. gcloud CLI 기본 설정
+2. gcloud CLI 기본 설정
 
 ## Required Permissions
 

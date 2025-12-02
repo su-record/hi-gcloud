@@ -24,8 +24,6 @@ import { gcpSecretListDefinition, gcpSecretList } from './gcp/secret.js';
 import { gcpAuthStatusDefinition, gcpAuthStatus } from './gcp/auth.js';
 import { gcpServicesListDefinition, gcpServicesList } from './gcp/services.js';
 import { gcpBillingInfoDefinition, gcpBillingInfo } from './gcp/billing.js';
-import { gcpSetupDefinition, gcpSetup } from './gcp/setup.js';
-import { readConfig } from './utils/config.js';
 
 // Prompts definitions
 const prompts = [
@@ -66,12 +64,6 @@ const prompts = [
 // Resources definitions
 const resources = [
   {
-    uri: 'gcp://config/current',
-    name: 'GCP 현재 설정',
-    description: '현재 프로젝트의 GCP 설정 정보',
-    mimeType: 'application/json',
-  },
-  {
     uri: 'gcp://auth/status',
     name: 'GCP 인증 상태',
     description: '현재 gcloud 인증 상태 및 계정 정보',
@@ -81,10 +73,6 @@ const resources = [
 
 // Collect all tool definitions
 const tools = [
-  // Setup (first for discoverability)
-  gcpSetupDefinition,
-
-  // GCP Tools
   gcpLogsReadDefinition,
   gcpRunStatusDefinition,
   gcpRunLogsDefinition,
@@ -100,7 +88,7 @@ function createServer() {
   const server = new Server(
     {
       name: 'Hi-GCloud',
-      version: '0.1.1',
+      version: '0.1.2',
     },
     {
       capabilities: {
@@ -108,23 +96,10 @@ function createServer() {
         prompts: {},
         resources: {},
       },
-      instructions: `[필수] 첫 응답 전에 사용자에게 물어보세요: "이 프로젝트에서 GCP를 사용하시나요?"
-- 예 → gcp_setup(action: "create") 호출
-- 아니오 → gcp_setup(action: "disable") 호출 (이후 GCP 도구 비활성화)
-
-도구 호출 없이 바로 질문하세요. gcloud 설치 여부는 "예" 선택 후에 확인됩니다.`,
     }
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    const config = readConfig();
-
-    // 설정 파일이 있고 disabled면 도구 없음
-    if (config.exists && config.disabled) {
-      return { tools: [] };
-    }
-
-    // 설정 없거나 enabled면 전체 도구
     return { tools };
   });
 
@@ -209,18 +184,6 @@ ${args?.region ? `리전: ${args.region}` : ''}`,
     const { uri } = request.params;
 
     switch (uri) {
-      case 'gcp://config/current':
-        const config = readConfig();
-        return {
-          contents: [
-            {
-              uri,
-              mimeType: 'application/json',
-              text: JSON.stringify(config, null, 2),
-            },
-          ],
-        };
-
       case 'gcp://auth/status':
         const authResult = await gcpAuthStatus({ format: 'json' });
         return {
@@ -243,11 +206,6 @@ ${args?.region ? `리전: ${args.region}` : ''}`,
 
     try {
       switch (name) {
-        // Setup
-        case 'gcp_setup':
-          return await gcpSetup(args as any) as CallToolResult;
-
-        // GCP Tools
         case 'gcp_logs_read':
           return await gcpLogsRead(args as any) as CallToolResult;
         case 'gcp_run_status':
