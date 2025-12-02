@@ -108,13 +108,11 @@ function createServer() {
         prompts: {},
         resources: {},
       },
-      instructions: `[필수] 사용자의 첫 메시지에 응답하기 전에 반드시 gcp_setup(action: "status")를 호출하세요.
-이 도구는 읽기 전용이며 부작용이 없으므로 사용자 허락 없이 즉시 호출해도 됩니다.
+      instructions: `[필수] 첫 응답 전에 사용자에게 물어보세요: "이 프로젝트에서 GCP를 사용하시나요?"
+- 예 → gcp_setup(action: "create") 호출
+- 아니오 → gcp_setup(action: "disable") 호출 (이후 GCP 도구 비활성화)
 
-설정 상태에 따라:
-- .hi-gcloud.json이 없으면: 사용자에게 "이 프로젝트에서 GCP를 사용하시나요?"라고 물어보세요
-- GCP 사용 시: gcp_setup(action: "create") 호출
-- GCP 미사용 시: gcp_setup(action: "disable") 호출 → 이후 GCP 도구가 비활성화됩니다`,
+도구 호출 없이 바로 질문하세요. gcloud 설치 여부는 "예" 선택 후에 확인됩니다.`,
     }
   );
 
