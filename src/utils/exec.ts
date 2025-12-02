@@ -4,6 +4,9 @@ import { readConfig } from './config.js';
 
 const execAsync = promisify(exec);
 
+// Cache for discovered gcloud path
+let cachedGcloudPath: string | null = null;
+
 export interface ExecResult {
   stdout: string;
   stderr: string;
@@ -19,8 +22,11 @@ export interface GcloudError {
  * Execute a gcloud command
  */
 export async function executeGcloud(command: string, timeout = 30000): Promise<ExecResult> {
+  // Use cached gcloud path if available, otherwise find it
+  const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
+
   try {
-    const result = await execAsync(`gcloud ${command}`, {
+    const result = await execAsync(`${gcloudPath} ${command}`, {
       timeout,
       maxBuffer: 10 * 1024 * 1024, // 10MB buffer
     });
@@ -80,34 +86,50 @@ function parseGcloudError(errorMessage: string): GcloudError {
 }
 
 /**
+ * Find gcloud CLI path (with caching)
+ */
+async function findGcloudPath(): Promise<string | null> {
+  // Return cached path if available
+  if (cachedGcloudPath) {
+    return cachedGcloudPath;
+  }
+
+  const gcloudPaths = [
+    'gcloud',
+    '/usr/local/bin/gcloud',
+    '/opt/homebrew/bin/gcloud',
+    `${process.env.HOME}/google-cloud-sdk/bin/gcloud`,
+    '/usr/bin/gcloud',
+  ];
+
+  // Check all paths in parallel with short timeout
+  const checks = gcloudPaths.map(async (gcloudPath) => {
+    try {
+      await execAsync(`${gcloudPath} --version`, { timeout: 1000 });
+      return gcloudPath;
+    } catch {
+      return null;
+    }
+  });
+
+  const results = await Promise.all(checks);
+  const foundPath = results.find((p) => p !== null) || null;
+
+  // Cache the result
+  if (foundPath) {
+    cachedGcloudPath = foundPath;
+  }
+
+  return foundPath;
+}
+
+/**
  * Check if gcloud CLI is installed and authenticated
  */
 export async function checkGcloudAuth(): Promise<{ authenticated: boolean; project?: string; account?: string; error?: GcloudError }> {
-  try {
-    // Check if gcloud is installed - try common paths if not in PATH
-    const gcloudPaths = [
-      'gcloud',
-      '/usr/local/bin/gcloud',
-      '/opt/homebrew/bin/gcloud',
-      `${process.env.HOME}/google-cloud-sdk/bin/gcloud`,
-      '/usr/bin/gcloud',
-    ];
+  const gcloudPath = await findGcloudPath();
 
-    let gcloudFound = false;
-    for (const gcloudPath of gcloudPaths) {
-      try {
-        await execAsync(`${gcloudPath} --version`, { timeout: 5000 });
-        gcloudFound = true;
-        break;
-      } catch {
-        continue;
-      }
-    }
-
-    if (!gcloudFound) {
-      throw new Error('gcloud not found');
-    }
-  } catch {
+  if (!gcloudPath) {
     return {
       authenticated: false,
       error: {
@@ -120,7 +142,7 @@ export async function checkGcloudAuth(): Promise<{ authenticated: boolean; proje
 
   try {
     // Check authentication status
-    const authResult = await execAsync('gcloud auth list --format="value(account)" --filter="status:ACTIVE"', { timeout: 10000 });
+    const authResult = await execAsync(`${gcloudPath} auth list --format="value(account)" --filter="status:ACTIVE"`, { timeout: 10000 });
     const account = authResult.stdout.trim();
 
     if (!account) {
@@ -135,7 +157,7 @@ export async function checkGcloudAuth(): Promise<{ authenticated: boolean; proje
     }
 
     // Get current project
-    const projectResult = await execAsync('gcloud config get-value project', { timeout: 5000 });
+    const projectResult = await execAsync(`${gcloudPath} config get-value project`, { timeout: 5000 });
     const project = projectResult.stdout.trim();
 
     return {
@@ -167,8 +189,10 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
   }
 
   // 3. Fall back to gcloud config
+  const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
+
   try {
-    const result = await execAsync('gcloud config get-value project', { timeout: 5000 });
+    const result = await execAsync(`${gcloudPath} config get-value project`, { timeout: 5000 });
     const project = result.stdout.trim();
 
     if (!project || project === '(unset)') {
@@ -204,8 +228,10 @@ export async function getRegion(providedRegion?: string): Promise<string | undef
   }
 
   // 3. Fall back to gcloud config
+  const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
+
   try {
-    const result = await execAsync('gcloud config get-value compute/region', { timeout: 5000 });
+    const result = await execAsync(`${gcloudPath} config get-value compute/region`, { timeout: 5000 });
     const region = result.stdout.trim();
     return region && region !== '(unset)' ? region : undefined;
   } catch {
