@@ -1,4 +1,5 @@
 import { executeGcloud, getProjectId } from '../utils/exec.js';
+import { readConfig, CloudSqlInstance } from '../utils/config.js';
 import { exec, spawn } from 'child_process';
 import { promisify } from 'util';
 
@@ -155,9 +156,20 @@ async function getProxyStatus() {
     lines.push('실행 중인 프록시가 없습니다.');
   }
 
-  // List available Cloud SQL instances
-  lines.push('');
-  lines.push('## 사용 가능한 Cloud SQL 인스턴스');
+  // Check config for saved Cloud SQL instances
+  const config = await readConfig();
+  if (config?.cloud_sql?.length) {
+    lines.push('## 설정된 Cloud SQL 인스턴스 (.hi-gcloud.json)');
+    for (const sql of config.cloud_sql) {
+      lines.push(`- **${sql.name}** (${sql.region}, 포트: ${sql.port || 5432})`);
+    }
+    lines.push('');
+    lines.push('💡 바로 실행: `gcp_sql_proxy(action: "start")`');
+    lines.push('');
+  }
+
+  // List available Cloud SQL instances from GCP
+  lines.push('## GCP Cloud SQL 인스턴스');
 
   try {
     const result = await executeGcloud('sql instances list --format="table(name,region,databaseVersion,state)"', 15000);
@@ -172,9 +184,13 @@ async function getProxyStatus() {
     lines.push(`인스턴스 목록 조회 실패: ${error.message || error}`);
   }
 
-  lines.push('');
-  lines.push('## 프록시 시작');
-  lines.push('`gcp_sql_proxy(action: "start", instance: "인스턴스명", region: "리전")`');
+  if (!config?.cloud_sql?.length) {
+    lines.push('');
+    lines.push('## 프록시 시작');
+    lines.push('`gcp_sql_proxy(action: "start", instance: "인스턴스명", region: "리전")`');
+    lines.push('');
+    lines.push('💡 gcp_setup으로 .hi-gcloud.json 생성 시 Cloud SQL 정보가 자동 저장됩니다.');
+  }
 
   return {
     content: [{ type: 'text', text: lines.join('\n') }],
@@ -182,29 +198,55 @@ async function getProxyStatus() {
 }
 
 async function startProxy(args: SqlProxyArgs) {
-  if (!args.instance) {
+  // Try to get instance info from config if not provided
+  let instanceName = args.instance;
+  let region = args.region;
+  let port = args.port;
+
+  // If instance not provided, try to get from config
+  if (!instanceName) {
+    const config = await readConfig();
+    if (config?.cloud_sql?.length) {
+      const firstInstance = config.cloud_sql[0];
+      instanceName = firstInstance.name;
+      region = region || firstInstance.region;
+      port = port || firstInstance.port;
+    }
+  }
+
+  if (!instanceName) {
     return {
       content: [{
         type: 'text',
-        text: '❌ instance가 필요합니다.\n\n예: gcp_sql_proxy(action: "start", instance: "my-instance", region: "asia-northeast3")',
+        text: '❌ instance가 필요합니다.\n\n예: gcp_sql_proxy(action: "start", instance: "my-instance", region: "asia-northeast3")\n\n💡 또는 gcp_setup으로 .hi-gcloud.json에 cloud_sql 설정을 추가하세요.',
       }],
       isError: true,
     };
   }
 
-  if (!args.region) {
+  // If region not provided, try to get from config
+  if (!region) {
+    const config = await readConfig();
+    const sqlConfig = config?.cloud_sql?.find((sql: CloudSqlInstance) => sql.name === instanceName);
+    if (sqlConfig) {
+      region = sqlConfig.region;
+      port = port || sqlConfig.port;
+    }
+  }
+
+  if (!region) {
     return {
       content: [{
         type: 'text',
-        text: '❌ region이 필요합니다.\n\n예: gcp_sql_proxy(action: "start", instance: "my-instance", region: "asia-northeast3")',
+        text: `❌ region이 필요합니다.\n\n예: gcp_sql_proxy(action: "start", instance: "${instanceName}", region: "asia-northeast3")`,
       }],
       isError: true,
     };
   }
 
   const projectId = await getProjectId(args.project_id);
-  const port = args.port || 5432;
-  const connectionName = `${projectId}:${args.region}:${args.instance}`;
+  port = port || 5432;
+  const connectionName = `${projectId}:${region}:${instanceName}`;
 
   // Find cloud-sql-proxy path
   let proxyPath = '';
@@ -239,7 +281,7 @@ async function startProxy(args: SqlProxyArgs) {
     return {
       content: [{
         type: 'text',
-        text: `❌ 포트 ${port}가 이미 사용 중입니다.\n\n다른 포트를 지정하세요: gcp_sql_proxy(action: "start", instance: "${args.instance}", port: ${port + 1})`,
+        text: `❌ 포트 ${port}가 이미 사용 중입니다.\n\n다른 포트를 지정하세요: gcp_sql_proxy(action: "start", instance: "${instanceName}", port: ${port + 1})`,
       }],
       isError: true,
     };

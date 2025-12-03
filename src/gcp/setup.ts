@@ -43,12 +43,20 @@ export const gcpSetupDefinition = {
   },
 };
 
+interface CloudSqlInstance {
+  name: string;
+  region: string;
+  port?: number;
+  database?: string;
+}
+
 interface GcpSetupArgs {
   action?: 'status' | 'create' | 'update';
   project_path?: string;
   project_id?: string;
   region?: string;
   account?: string;
+  cloud_sql?: CloudSqlInstance[];
 }
 
 export async function gcpSetup(args: GcpSetupArgs) {
@@ -182,6 +190,22 @@ async function saveConfig(args: GcpSetupArgs) {
     defaultAccount = accountResult.stdout.trim();
   } catch {}
 
+  // Auto-detect Cloud SQL instances
+  let cloudSqlInstances: CloudSqlInstance[] = [];
+  try {
+    const projectId = args.project_id || defaultProject;
+    if (projectId) {
+      const sqlResult = await executeGcloud(`sql instances list --project=${projectId} --format="json"`, 15000);
+      const instances = JSON.parse(sqlResult.stdout || '[]');
+      cloudSqlInstances = instances.map((inst: any) => ({
+        name: inst.name,
+        region: inst.region,
+        port: inst.databaseVersion?.startsWith('MYSQL') ? 3306 : 5432,
+        database: inst.databaseVersion?.startsWith('MYSQL') ? 'mysql' : 'postgres',
+      }));
+    }
+  } catch {}
+
   // Read existing config if updating
   const configPath = join(args.project_path, '.hi-gcloud.json');
   let existingConfig: any = {};
@@ -197,6 +221,7 @@ async function saveConfig(args: GcpSetupArgs) {
     project_id: args.project_id || existingConfig.project_id || defaultProject,
     region: args.region || existingConfig.region || defaultRegion || undefined,
     account: args.account || existingConfig.account || defaultAccount,
+    cloud_sql: args.cloud_sql || existingConfig.cloud_sql || (cloudSqlInstances.length > 0 ? cloudSqlInstances : undefined),
   };
 
   if (!newConfig.project_id) {
@@ -211,14 +236,18 @@ async function saveConfig(args: GcpSetupArgs) {
 
   await writeFile(configPath, JSON.stringify(newConfig, null, 2));
 
+  const sqlInfo = newConfig.cloud_sql?.length
+    ? `\n🗄️ Cloud SQL:\n${newConfig.cloud_sql.map((sql: CloudSqlInstance) => `   - ${sql.name} (${sql.region}, 포트: ${sql.port})`).join('\n')}`
+    : '';
+
   return {
     content: [{
       type: 'text',
       text: `✅ ${configPath} 저장됨
 
 📁 프로젝트: ${newConfig.project_id}
-🌍 리전: ${newConfig.region}
-👤 계정: ${newConfig.account || '(미설정)'}
+🌍 리전: ${newConfig.region || '(미설정)'}
+👤 계정: ${newConfig.account || '(미설정)'}${sqlInfo}
 
 > ⚠️ .gitignore에 .hi-gcloud.json 추가를 권장합니다.`,
     }],

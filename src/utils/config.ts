@@ -2,10 +2,18 @@ import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
+export interface CloudSqlInstance {
+  name: string;
+  region: string;
+  port?: number;  // 로컬 포트 (기본: 5432)
+  database?: string;  // 기본 데이터베이스
+}
+
 export interface HiGcloudConfig {
   project_id?: string;
   region?: string;
   account?: string;
+  cloud_sql?: CloudSqlInstance[];  // Cloud SQL 인스턴스 목록
 }
 
 const CONFIG_FILENAME = '.hi-gcloud.json';
