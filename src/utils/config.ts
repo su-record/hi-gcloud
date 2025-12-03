@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 
@@ -10,42 +10,43 @@ export interface HiGcloudConfig {
 
 const CONFIG_FILENAME = '.hi-gcloud.json';
 
-/**
- * Get config file path for current working directory
- */
-function getConfigPath(): string {
-  return join(process.cwd(), CONFIG_FILENAME);
-}
+// Cache for config to avoid repeated file reads
+let cachedConfig: HiGcloudConfig | null = null;
+let cachedConfigPath: string | null = null;
 
 /**
  * Read project config from .hi-gcloud.json
+ * Checks common locations: cwd, home directory
  */
-export async function readConfig(): Promise<HiGcloudConfig | null> {
-  const configPath = getConfigPath();
-
-  if (!existsSync(configPath)) {
-    return null;
+export async function readConfig(projectPath?: string): Promise<HiGcloudConfig | null> {
+  // Check specific path first
+  if (projectPath) {
+    const configPath = join(projectPath, CONFIG_FILENAME);
+    if (existsSync(configPath)) {
+      try {
+        const content = await readFile(configPath, 'utf-8');
+        return JSON.parse(content);
+      } catch {
+        return null;
+      }
+    }
   }
 
-  try {
-    const content = await readFile(configPath, 'utf-8');
-    return JSON.parse(content);
-  } catch {
-    return null;
+  // Check home directory for global config
+  const homeConfig = join(process.env.HOME || '', CONFIG_FILENAME);
+  if (existsSync(homeConfig)) {
+    if (cachedConfigPath === homeConfig && cachedConfig) {
+      return cachedConfig;
+    }
+    try {
+      const content = await readFile(homeConfig, 'utf-8');
+      cachedConfig = JSON.parse(content);
+      cachedConfigPath = homeConfig;
+      return cachedConfig;
+    } catch {
+      return null;
+    }
   }
-}
 
-/**
- * Write project config to .hi-gcloud.json
- */
-export async function writeConfig(config: HiGcloudConfig): Promise<void> {
-  const configPath = getConfigPath();
-  await writeFile(configPath, JSON.stringify(config, null, 2));
-}
-
-/**
- * Check if config file exists
- */
-export function configExists(): boolean {
-  return existsSync(getConfigPath());
+  return null;
 }
