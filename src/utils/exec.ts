@@ -94,16 +94,24 @@ async function findGcloudPath(): Promise<string | null> {
     return cachedGcloudPath;
   }
 
-  try {
-    // Fast path: use 'which' to find gcloud
-    const result = await execAsync('which gcloud', { timeout: 500 });
-    const path = result.stdout.trim();
-    if (path) {
-      cachedGcloudPath = path;
-      return path;
+  // Common gcloud installation paths
+  const commonPaths = [
+    'gcloud',
+    '/usr/local/bin/gcloud',
+    '/opt/homebrew/bin/gcloud',
+    `${process.env.HOME}/google-cloud-sdk/bin/gcloud`,
+    '/usr/bin/gcloud',
+    '/snap/bin/gcloud',
+  ];
+
+  for (const gcloudPath of commonPaths) {
+    try {
+      await execAsync(`${gcloudPath} --version`, { timeout: 2000 });
+      cachedGcloudPath = gcloudPath;
+      return gcloudPath;
+    } catch {
+      // Try next path
     }
-  } catch {
-    // 'which' failed, gcloud not in PATH
   }
 
   return null;

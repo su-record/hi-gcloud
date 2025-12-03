@@ -169,8 +169,13 @@ async function saveConfig(args: GcpSetupArgs) {
   try {
     const regionResult = await executeGcloud('config get-value compute/region', 5000);
     defaultRegion = regionResult.stdout.trim();
-    if (defaultRegion === '(unset)') defaultRegion = '';
-  } catch {}
+    // Handle various "unset" responses from gcloud
+    if (!defaultRegion || defaultRegion === '(unset)' || defaultRegion === 'unset') {
+      defaultRegion = '';
+    }
+  } catch {
+    defaultRegion = '';
+  }
 
   try {
     const accountResult = await executeGcloud('auth list --format="value(account)" --filter="status:ACTIVE"', 5000);
@@ -190,7 +195,7 @@ async function saveConfig(args: GcpSetupArgs) {
 
   const newConfig = {
     project_id: args.project_id || existingConfig.project_id || defaultProject,
-    region: args.region || existingConfig.region || defaultRegion || 'asia-northeast3',
+    region: args.region || existingConfig.region || defaultRegion || undefined,
     account: args.account || existingConfig.account || defaultAccount,
   };
 
