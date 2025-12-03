@@ -1,5 +1,6 @@
 # Hi-GCloud
 
+[![smithery badge](https://smithery.ai/badge/@su-record/hi-gcloud)](https://smithery.ai/server/@su-record/hi-gcloud)
 [![npm version](https://badge.fury.io/js/@su-record%2Fhi-gcloud.svg)](https://www.npmjs.com/package/@su-record/hi-gcloud)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MCP Compatible](https://img.shields.io/badge/MCP-Compatible-blue.svg)](https://modelcontextprotocol.io)
