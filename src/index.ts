@@ -25,6 +25,7 @@ import { gcpSecretListDefinition, gcpSecretList } from './gcp/secret.js';
 import { gcpAuthStatusDefinition, gcpAuthStatus } from './gcp/auth.js';
 import { gcpServicesListDefinition, gcpServicesList } from './gcp/services.js';
 import { gcpBillingInfoDefinition, gcpBillingInfo } from './gcp/billing.js';
+import { gcpSqlProxyDefinition, gcpSqlProxy } from './gcp/sqlProxy.js';
 
 // Prompts definitions
 const prompts = [
@@ -79,6 +80,7 @@ const tools = [
   gcpRunStatusDefinition,
   gcpRunLogsDefinition,
   gcpSqlQueryDefinition,
+  gcpSqlProxyDefinition,
   gcpStorageListDefinition,
   gcpSecretListDefinition,
   gcpAuthStatusDefinition,
@@ -228,6 +230,8 @@ ${args?.region ? `리전: ${args.region}` : ''}`,
           return await gcpServicesList(args as any) as CallToolResult;
         case 'gcp_billing_info':
           return await gcpBillingInfo(args as any) as CallToolResult;
+        case 'gcp_sql_proxy':
+          return await gcpSqlProxy(args as any) as CallToolResult;
 
         default:
           throw new McpError(ErrorCode.MethodNotFound, `Unknown tool: ${name}`);
