@@ -2,7 +2,7 @@
   "name": "@su-record/hi-gcloud",
   "displayName": "Hi-GCloud",
   "description": "GCP 운영 도구 - 로그 조회, Cloud Run 배포 디버깅, 비용 모니터링을 CLI에서 바로",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "author": "Su",
   "license": "MIT",
   "categories": [

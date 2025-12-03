@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { readConfig } from './config.js';
 
 const execAsync = promisify(exec);
 
@@ -93,33 +94,19 @@ async function findGcloudPath(): Promise<string | null> {
     return cachedGcloudPath;
   }
 
-  const gcloudPaths = [
-    'gcloud',
-    '/usr/local/bin/gcloud',
-    '/opt/homebrew/bin/gcloud',
-    `${process.env.HOME}/google-cloud-sdk/bin/gcloud`,
-    '/usr/bin/gcloud',
-  ];
-
-  // Check all paths in parallel with short timeout
-  const checks = gcloudPaths.map(async (gcloudPath) => {
-    try {
-      await execAsync(`${gcloudPath} --version`, { timeout: 1000 });
-      return gcloudPath;
-    } catch {
-      return null;
+  try {
+    // Fast path: use 'which' to find gcloud
+    const result = await execAsync('which gcloud', { timeout: 500 });
+    const path = result.stdout.trim();
+    if (path) {
+      cachedGcloudPath = path;
+      return path;
     }
-  });
-
-  const results = await Promise.all(checks);
-  const foundPath = results.find((p) => p !== null) || null;
-
-  // Cache the result
-  if (foundPath) {
-    cachedGcloudPath = foundPath;
+  } catch {
+    // 'which' failed, gcloud not in PATH
   }
 
-  return foundPath;
+  return null;
 }
 
 /**
@@ -173,7 +160,7 @@ export async function checkGcloudAuth(): Promise<{ authenticated: boolean; proje
 }
 
 /**
- * Get current project ID (priority: parameter > gcloud config)
+ * Get current project ID (priority: parameter > .hi-gcloud.json > gcloud config)
  */
 export async function getProjectId(providedProjectId?: string): Promise<string> {
   // 1. Parameter takes highest priority
@@ -181,7 +168,13 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
     return providedProjectId;
   }
 
-  // 2. Fall back to gcloud config
+  // 2. Check .hi-gcloud.json config
+  const config = await readConfig();
+  if (config?.project_id) {
+    return config.project_id;
+  }
+
+  // 3. Fall back to gcloud config
   const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
 
   try {
@@ -192,7 +185,7 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
       throw {
         type: 'NO_PROJECT',
         message: '프로젝트가 설정되지 않았습니다.',
-        suggestion: '`gcloud config set project PROJECT_ID` 명령어를 실행해주세요.',
+        suggestion: '.hi-gcloud.json 파일을 생성하거나 `gcloud config set project PROJECT_ID` 명령어를 실행해주세요.',
       } as GcloudError;
     }
 
@@ -206,7 +199,7 @@ export async function getProjectId(providedProjectId?: string): Promise<string> 
 }
 
 /**
- * Get region (priority: parameter > gcloud config)
+ * Get region (priority: parameter > .hi-gcloud.json > gcloud config)
  */
 export async function getRegion(providedRegion?: string): Promise<string | undefined> {
   // 1. Parameter takes highest priority
@@ -214,7 +207,13 @@ export async function getRegion(providedRegion?: string): Promise<string | undef
     return providedRegion;
   }
 
-  // 2. Fall back to gcloud config
+  // 2. Check .hi-gcloud.json config
+  const config = await readConfig();
+  if (config?.region) {
+    return config.region;
+  }
+
+  // 3. Fall back to gcloud config
   const gcloudPath = cachedGcloudPath || await findGcloudPath() || 'gcloud';
 
   try {

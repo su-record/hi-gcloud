@@ -15,6 +15,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 
 // GCP Tools
+import { gcpSetupDefinition, gcpSetup } from './gcp/setup.js';
 import { gcpLogsReadDefinition, gcpLogsRead } from './gcp/logs.js';
 import { gcpRunStatusDefinition, gcpRunStatus } from './gcp/runStatus.js';
 import { gcpRunLogsDefinition, gcpRunLogs } from './gcp/runLogs.js';
@@ -73,6 +74,7 @@ const resources = [
 
 // Collect all tool definitions
 const tools = [
+  gcpSetupDefinition,
   gcpLogsReadDefinition,
   gcpRunStatusDefinition,
   gcpRunLogsDefinition,
@@ -88,7 +90,7 @@ function createServer() {
   const server = new Server(
     {
       name: 'Hi-GCloud',
-      version: '0.1.2',
+      version: '0.1.3',
     },
     {
       capabilities: {
@@ -206,6 +208,8 @@ ${args?.region ? `리전: ${args.region}` : ''}`,
 
     try {
       switch (name) {
+        case 'gcp_setup':
+          return await gcpSetup(args as any) as CallToolResult;
         case 'gcp_logs_read':
           return await gcpLogsRead(args as any) as CallToolResult;
         case 'gcp_run_status':
